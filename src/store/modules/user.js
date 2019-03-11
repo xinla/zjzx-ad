@@ -1,17 +1,21 @@
-import { login, logout, getInfo } from '@/api/login'
+import userService from '@/services/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
     token: getToken(),
+    id:'',
     name: '',
     avatar: '',
-    roles: []
+    roles: ['admin']
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_ID: (state, id) => {
+      state.id = id
     },
     SET_NAME: (state, name) => {
       state.name = name
@@ -27,12 +31,21 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      const username = userInfo.username.trim()
+      // const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
-          const data = response.data
+        // console.log(userInfo)
+        userService.loginByMobile(userInfo.username, userInfo.password).then(response => {
+          // console.log(response.data)
+          // return
+          const data = response.data.result
           setToken(data.token)
           commit('SET_TOKEN', data.token)
+          commit('SET_ID', data.user.id)
+          localStorage.id = data.user.id
+          localStorage.logid = data.user.logid
+          localStorage.token = data.token
+          commit('SET_NAME', data.username)
+          commit('SET_AVATAR', GoTruth.$Tool.headerImgFilter(data.user.imageurl))
           resolve()
         }).catch(error => {
           reject(error)
@@ -43,15 +56,19 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
-          const data = response.data
-          if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+        // console.log(state.id)
+        userService.getUserById(localStorage.id).then(response => {
+          const data = response.data.result
+          // console.log(data)
+          // return
+          /*if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.roles)
           } else {
             reject('getInfo: roles must be a non-null array !')
-          }
-          commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
+          }*/
+          commit('SET_ID', data.user.id)
+          commit('SET_NAME', data.username)
+          commit('SET_AVATAR', GoTruth.$Tool.headerImgFilter(data.user.imageurl))
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -62,10 +79,11 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
+        userService.logOut().then(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           removeToken()
+          localStorage.clear()
           resolve()
         }).catch(error => {
           reject(error)

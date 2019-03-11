@@ -2,7 +2,7 @@
   <div class="createPost-container">
     <el-form ref="postForm" :model="postForm" :rules="rules" class="form-container">
 
-      <sticky :class-name="'sub-navbar '+postForm.status">
+      <sticky class-name="sub-navbar">
         <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm">发布
         </el-button>
         <el-button v-loading="loading" type="warning" @click="draftForm">草稿</el-button>
@@ -21,54 +21,49 @@
             <div class="postInfo-container">
               <el-row>
                 <el-col :span="8">
-                  <!-- <el-form-item label-width="45px" label="作者:" class="postInfo-container-item">
+                  <!-- <el-form-item label-width="60px" label="作者:" class="postInfo-container-item">
                     <el-select v-model="postForm.author" :remote-method="getRemoteUserList" filterable remote placeholder="搜索用户">
                       <el-option v-for="(item,index) in userListOptions" :key="item+index" :label="item" :value="item"/>
                     </el-select>
                   </el-form-item> -->
-                  <el-form-item prop="externalLink" label-width="45px" label="作者:" style="margin-bottom: 30px;">
-                    <el-input v-model="postForm.author" autosize placeholder="请输入作者"/>
+                  <el-form-item prop="company" label-width="60px" label="公司名:" style="margin-bottom: 30px;">
+                    <el-input v-model="postForm.company" autosize placeholder="请输入公司名"/>
                   </el-form-item>
                 </el-col>
 
                 <el-col :span="10">
-                  <el-form-item label-width="80px" label="发布时间:" class="postInfo-container-item">
-                    <el-date-picker v-model="postForm.display_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"/>
+                  <el-form-item label-width="80px" label="类型:" class="postInfo-container-item">
+                    <el-select v-model="postForm.type" placeholder="类型">
+                      <el-option v-for="(value,key) in type" :key="key" :label="value" :value="parseInt(key)"/>
+                    </el-select>
                   </el-form-item>
                 </el-col>
 
-                <el-col :span="6">
-                  <el-form-item label-width="60px" label="重要性:" class="postInfo-container-item">
-                    <el-rate
-                      v-model="postForm.importance"
-                      :max="3"
-                      :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
-                      :low-threshold="1"
-                      :high-threshold="3"
-                      style="margin-top:8px;"/>
+                <!-- <el-col :span="10">
+                  <el-form-item label-width="80px" label="发布时间:" class="postInfo-container-item">
+                    <el-date-picker v-model="postForm.display_time" type="datetime" format="yyyy-MM-dd HH:mm:ss" placeholder="选择日期时间"/>
                   </el-form-item>
-                </el-col>
+                </el-col> -->
+
               </el-row>
             </div>
           </el-col>
         </el-row>
-
-        <el-form-item style="margin-bottom: 40px;" label-width="45px" label="摘要:">
-          <el-input :rows="1" v-model="postForm.content_short" type="textarea" class="article-textarea" autosize placeholder="请输入内容"/>
-          <span v-show="contentShortLength" class="word-counter">{{ contentShortLength }}字</span>
+        
+        <el-form-item prop="link" label-width="60px" label="外链:" style="margin-bottom: 30px;">
+          <el-input v-model="postForm.link" autosize placeholder="请输入广告外部链接"/>
         </el-form-item>
         
-        <el-form-item prop="externalLink" label-width="45px" label="外链:" style="margin-bottom: 30px;">
-          <el-input v-model="postForm.externalLink" autosize placeholder="请输入广告外部链接"/>
+        <el-form-item prop="images" label-width="60px" label="封面:" style="margin-bottom: 30px;">
+          <Upload v-model="images" />
         </el-form-item>
 
-        <!-- <el-form-item prop="content" style="margin-bottom: 30px;">
+        <el-form-item prop="content" label="内容:" label-width="60px" style="margin-bottom: 5px;">
+        </el-form-item>
+        <el-form-item prop="content" style="margin-bottom: 30px;">
           <Tinymce ref="editor" :height="400" v-model="postForm.content" />
-        </el-form-item> -->
-
-        <el-form-item prop="image_uri" label="封面:" style="margin-bottom: 30px;">
-          <Upload v-model="postForm.image_uri" />
         </el-form-item>
+
       </div>
     </el-form>
 
@@ -76,32 +71,28 @@
 </template>
 
 <script>
-// import Tinymce from '@/components/Tinymce'
+import Tinymce from '@/components/Tinymce'
 import Upload from '@/components/Upload/singleImage3'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
 import { fetchArticle } from '@/api/article'
-import advert from '@/services/advert'
+import advertService from '@/services/advert'
 
 const defaultForm = {
-  status: 'draft',
   title: '', // 文章题目
   content: '', // 文章内容
-  content_short: '', // 文章摘要
-  source_uri: '', // 文章外链
-  image_uri: [], // 文章图片数组
-  display_time: undefined, // 前台展示时间
-  id: undefined,
-  platforms: ['a-platform'],
-  comment_disabled: false,
-  importance: 0,
-  externalLink:'',// 广告外链
-
+  author: 0,
+  cover: '',
+  images: [], // 文章图片数组
+  templateid: 0,
+  company: '',
+  link: '',// 广告外链
+  type: '类型'
 }
 
 export default {
   name: 'ArticleDetail',
-  components: { MDinput, Upload, Sticky },
+  components: { Tinymce, MDinput, Upload, Sticky },
   props: {
     isEdit: {
       type: Boolean,
@@ -139,19 +130,22 @@ export default {
       postForm: Object.assign({}, defaultForm),
       loading: false,
       userListOptions: [],
+      type:Object.freeze({
+        1:'普通',
+        2:'内联',
+        3:'外联'
+      }),
+      images:[],
       rules: {
-        image_uri: [{ validator: validateRequire }],
+        images: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],
         // content: [{ validator: validateRequire }],
-        source_uri: [{ validator: validateSourceUri, trigger: 'blur' }]
+        link: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {}
     }
   },
   computed: {
-    contentShortLength() {
-      return this.postForm.content_short.length
-    },
     lang() {
       return this.$store.getters.language
     }
@@ -175,7 +169,6 @@ export default {
         this.postForm = response.data
         // Just for test
         this.postForm.title += `   Article Id:${this.postForm.id}`
-        this.postForm.content_short += `   Article Id:${this.postForm.id}`
 
         // Set tagsview title
         this.setTagsViewTitle()
@@ -189,25 +182,23 @@ export default {
       this.$store.dispatch('updateVisitedView', route)
     },
     submitForm() {
-      this.postForm.display_time = parseInt(this.display_time / 1000)
-      console.log(this.postForm)
+      this.postForm.images = String(this.images)
+      // console.log(temp)
+      this.loading = true
       this.$refs.postForm.validate(valid => {
         if (valid) {
-          advert.saveAdvert(this.postForm).then(res => {
+          advertService.saveAdvert(this.postForm).then(res => {
             console.log(res)
-            this.loading = true
             this.$notify({
               title: '成功',
               message: '发布文章成功',
               type: 'success',
               duration: 2000
-            }).catch(err => {
-              console.log(err)
             })
-            this.postForm.status = 'published'
-            this.loading = false
-            
+          }).catch(err => {
+            console.log(err)
           })
+          this.loading = false
         } else {
           console.log('error submit!!')
           return false
@@ -228,7 +219,6 @@ export default {
         showClose: true,
         duration: 1000
       })
-      this.postForm.status = 'draft'
     }
   }
 }

@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import configPath from '@/configs/path'
 
-const controller = configPath.successService + '/advert_form'
+const controller = '/zjzx-advert/advert_form'
 
 export default {
 
@@ -18,7 +18,7 @@ export default {
 	saveForm(ad) {
 		return request ({
       url: controller + '/saveForm',
-      mothod: 'post',
+      method: 'post',
       params: ad
     })
 	},
@@ -31,7 +31,7 @@ export default {
 	getNewSign(id) {
 		return request ({
       url: controller + '/getNewSign',
-      mothod: 'post',
+      method: 'post',
       params: { id }
     })
 	},

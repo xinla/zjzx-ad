@@ -49,7 +49,7 @@ export default {
         backgroundColor: '#394056',
         title: {
           top: 20,
-          text: 'Requests',
+          text: '统计曲线图',
           textStyle: {
             fontWeight: 'normal',
             fontSize: 16,
@@ -71,7 +71,7 @@ export default {
           itemWidth: 14,
           itemHeight: 5,
           itemGap: 13,
-          data: ['CMCC', 'CTCC', 'CUCC'],
+          data: ['点击率', '转化率', '流失率'],
           right: '4%',
           textStyle: {
             fontSize: 12,
@@ -119,7 +119,7 @@ export default {
           }
         }],
         series: [{
-          name: 'CMCC',
+          name: '点击率',
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -153,7 +153,7 @@ export default {
           },
           data: [220, 182, 191, 134, 150, 120, 110, 125, 145, 122, 165, 122]
         }, {
-          name: 'CTCC',
+          name: '转化率',
           type: 'line',
           smooth: true,
           symbol: 'circle',
@@ -187,7 +187,7 @@ export default {
           },
           data: [120, 110, 125, 145, 122, 165, 122, 220, 182, 191, 134, 150]
         }, {
-          name: 'CUCC',
+          name: '流失率',
           type: 'line',
           smooth: true,
           symbol: 'circle',

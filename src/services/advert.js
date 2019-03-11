@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import configPath from '@/configs/path'
 
-const controller = configPath.successService + '/advert'
+const controller = '/zjzx-advert/advert'
 
 export default {
 
@@ -22,8 +22,8 @@ export default {
 	saveAdvert(ad) {
     return request ({
       url: controller + '/saveAdvert',
-      mothod: 'post',
-      params: ad
+      method: 'post',
+      data: { record: ad}
     })
   },
 
@@ -37,8 +37,8 @@ export default {
   getAdvertPage(page, size, key) {
     return request ({
       url: controller + '/getAdvertPage',
-      mothod: 'post',
-      params: { page, size, key }
+      method: 'post',
+      data: { page, size, key }
     })
   },
 
@@ -50,7 +50,6 @@ export default {
   getAdvertById(id) {
     return request ({
       url: controller + '/getAdvertById',
-      mothod: 'post',
       params: { id }
     })
   },
@@ -63,7 +62,6 @@ export default {
   getNextAdvert(id) {
     return request ({
       url: controller + '/getNextAdvert',
-      mothod: 'post',
       params: { id }
     })
   }

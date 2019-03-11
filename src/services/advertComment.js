@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import configPath from '@/configs/path'
 
-const controller = configPath.successService + '/advert_comment'
+const controller = '/zjzx-advert/advert_comment'
 
 export default {
 
@@ -15,7 +15,7 @@ export default {
 	doAdvertComment(advertId, content, creatorId) {
 		return request ({
       url: controller + '/doAdvertComment',
-      mothod: 'post',
+      method: 'post',
       params: { advertId, content, creatorId }
     })
 	},
@@ -30,7 +30,7 @@ export default {
 	getCommentPage(advertId, page, size) {
 		return request ({
       url: controller + '/getCommentPage',
-      mothod: 'post',
+      method: 'post',
       params: { advertId, page, size }
     })
 	}

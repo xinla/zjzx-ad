@@ -17,6 +17,9 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+// 引用功能函数
+import Tool from '@/utils/methods'
+Vue.use(Tool);
 /**
  * This project originally used easy-mock to simulate data,
  * but its official service is very unstable,
@@ -25,7 +28,8 @@ import '@/permission' // permission control
  * it will intercept your request, so you won't see the request in the network.
  * If you remove `../mock` it will automatically request easy-mock data.
  */
-import '../mock' // simulation data
+ 
+// import '../mock' // simulation data
 
 Vue.use(ElementUI)
 
@@ -35,5 +39,8 @@ new Vue({
   el: '#app',
   router,
   store,
+  created() {
+  	window.GoTruth = this;
+  },
   render: h => h(App)
 })

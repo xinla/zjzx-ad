@@ -26,13 +26,13 @@
       highlight-current-row>
       <el-table-column align="center" label="ID" width="95">
         <template slot-scope="scope">
-          {{ scope.$index }}
+          {{ scope.row.id }}
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="发布时间" width="200">
         <template slot-scope="scope">
           <i class="el-icon-time"/>
-          <span>{{ scope.row.display_time }}</span>
+          <span>{{ scope.row.createtime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="标题">
@@ -52,7 +52,7 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="类型" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
+          <el-tag :type="scope.row.type | statusFilter">{{ scope.row.type }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="操作" width="230" align="center">
@@ -67,15 +67,17 @@
       </el-table-column>
     </el-table>
 
-    <!-- <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" /> -->
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
       
   </div>
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import advertService from '@/services/advert'
+import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 export default {
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -89,17 +91,27 @@ export default {
   data() {
     return {
       list: null,
-      listLoading: true
+      total: 0,
+      listLoading: true,
+      listQuery: {
+        page: 1,
+        limit: 20
+      },
+      pageNumber: 1,
+      pageSize: 20,
+      keywords: ''
     }
   },
   created() {
-    this.fetchData()
+    this.getList()
   },
   methods: {
-    fetchData() {
+    getList() {
       this.listLoading = true
-      getList(this.listQuery).then(response => {
-        this.list = response.data.items
+      advertService.getAdvertPage(this.pageNumber, this.pageSize).then(response => {
+        // console.log(response.data)
+        this.total = response.data.recordPage.totalRow
+        this.list = response.data.recordPage.list
         this.listLoading = false
       })
     }
