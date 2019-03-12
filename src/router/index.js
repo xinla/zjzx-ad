@@ -41,25 +41,25 @@ export const constantRouterMap = [
   {
     path: '/ad',
     component: Layout,
-    redirect: '/ad/table',
+    redirect: '/ad/list',
     name: 'Ad',
     meta: { title: '广告', icon: 'example' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/advertisement/table'),
+        name: 'ListAd',
+        path: 'list',
+        component: () => import('@/views/advertisement/list'),
         meta: { title: '列表', icon: 'table' }
       },
       {
-        path: 'publish',
-        name: 'Publish',
-        component: () => import('@/views/advertisement/publish'),
+        name: 'EditPublish',
+        path: 'editPublish',
+        component: () => import('@/views/advertisement/editPublish'),
         meta: { title: '发布', icon: 'table' }
       },
       {
-        path: 'statistics',
         name: 'Statistics',
+        path: 'statistics',
         component: () => import('@/views/advertisement/statistics'),
         meta: { title: '统计', icon: 'table' }
       }
@@ -71,8 +71,8 @@ export const constantRouterMap = [
     component: Layout,
     children: [
       {
-        path: 'index',
         name: 'Form',
+        path: 'index',
         component: () => import('@/views/form/index'),
         meta: { title: '表单', icon: 'form' }
       }

@@ -4,12 +4,21 @@ import store from '../store'
 import { getToken } from '@/utils/auth'
 import configPath from '@/configs/path'
 
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 // 创建axios实例
 const service = axios.create({
   baseURL: configPath.successServer, // api 的 base_url
-  timeout: 5000 // 请求超时时间
+  timeout: 5000, // 请求超时时间
+  transformRequest: [function (data) {
+    let newData = new URLSearchParams()
+    for (let key in data) {
+      if (data.hasOwnProperty(key)) {
+        newData.append(key, JSON.stringify(data[key]))
+      }
+    }
+    return newData
+  }],
 })
-
 // request拦截器
 /*service.interceptors.request.use(
   config => {

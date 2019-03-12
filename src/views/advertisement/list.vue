@@ -57,11 +57,11 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="操作" width="230" align="center">
         <template slot-scope="scope">
-          <el-button type="primary" size="mini">编辑
+          <el-button type="primary" size="mini" @click="$Tool.goPage({name:'EditPublish',query:{articleId:scope.row.id}})">编辑
           </el-button>
-          <el-button type="success" size="mini">下架
+          <el-button type="success" size="mini" @click="downAd(scope.row.id)">下架
           </el-button>
-          <el-button type="danger" size="mini">删除
+          <el-button type="danger" size="mini" @click="deleteAd(scope.row.id)">删除
           </el-button>
         </template>
       </el-table-column>
@@ -110,10 +110,23 @@ export default {
       this.listLoading = true
       advertService.getAdvertPage(this.pageNumber, this.pageSize).then(response => {
         // console.log(response.data)
+        this.listLoading = false
         this.total = response.data.recordPage.totalRow
         this.list = response.data.recordPage.list
+        this.pageNumber ++
+      }).catch(err => {
         this.listLoading = false
+        this.$message({
+          message: '获取失败，请稍后重试！',
+          type: 'error'
+        })
       })
+    },
+    downAd(id) {
+
+    },
+    deleteAd(id) {
+
     }
   }
 }

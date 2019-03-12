@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 import configPath from '@/configs/path'
-
+import axios from 'axios'
 const controller = '/zjzx-advert/advert'
 
 export default {
@@ -23,7 +23,7 @@ export default {
     return request ({
       url: controller + '/saveAdvert',
       method: 'post',
-      data: { record: ad}
+      data: { record: ad }
     })
   },
 
