@@ -11,6 +11,7 @@
 import editorImage from './components/editorImage'
 import plugins from './plugins'
 import toolbar from './toolbar'
+import configPath from '@/configs/path'
 
 export default {
   name: 'Tinymce',
@@ -175,7 +176,7 @@ export default {
     imageSuccessCBK(arr) {
       const _this = this
       arr.forEach(v => {
-        window.tinymce.get(_this.tinymceId).insertContent(`<img class="wscnph" src="${v.url}" >`)
+        window.tinymce.get(_this.tinymceId).insertContent(`<img class="wscnph" src="${configPath.fileRoot}/${v.url}" >`)
       })
     }
   }

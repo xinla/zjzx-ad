@@ -13,7 +13,8 @@ const service = axios.create({
     let newData = new URLSearchParams()
     for (let key in data) {
       if (data.hasOwnProperty(key)) {
-        newData.append(key, JSON.stringify(data[key]))
+        typeof data[key] === 'string' || (data[key] = JSON.stringify(data[key])) // 防止字符串参数再被JSON套一层引号
+        newData.append(key, data[key])
       }
     }
     return newData

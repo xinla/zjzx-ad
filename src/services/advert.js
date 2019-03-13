@@ -6,7 +6,7 @@ const controller = '/zjzx-advert/advert'
 export default {
 
   /**
-   * [saveAdvert 发布广告]
+   * [发布广告]
    * @param  {[object]} ad [文章信息]
    *  title  广告标题  vachar  
       content 文章内容  varchar 
@@ -28,22 +28,26 @@ export default {
   },
 
   /**
-   * [getAdvertPage 根据标题，内容，公司搜索]
+   * [根据标题，内容，公司搜索]
+   * @param  {[object]} query [查询条件对象]
    * @param  {[type]} page [当前页]
    * @param  {[type]} size [分页大小]
    * @param  {[type]} key  [关键词]
    * @return {[promise]}      [axios]
    */
-  getAdvertPage(page, size, key) {
+  getAdvertPage(query) {
     return request ({
       url: controller + '/getAdvertPage',
-      method: 'post',
-      data: { page, size, key }
+      params: { 
+        page: query.page, 
+        size: query.size, 
+        keyword: query.keyword 
+      }
     })
   },
 
   /**
-   * [getAdvertById 广告详情]
+   * [广告详情]
    * @param  {[type]} id [”广告标识”]
    * @return {[type]}    [description]
    */
@@ -55,16 +59,27 @@ export default {
   },
 
   /**
-   * [getNextAdvert 获取app内嵌广告]
+   * [获取app内嵌广告]
    * @param  {[type]} id [当前广告id]
    * @return {[type]}    [description]
    */
-  getNextAdvert(id) {
+  getNextAdvert(curentid) {
     return request ({
       url: controller + '/getNextAdvert',
-      params: { id }
+      params: { curentid }
+    })
+  },
+
+  /**
+   * 删除广告
+   * @param  {[array]} ids [删除的广告数组]
+   * @return {[type]}     [description]
+   */
+  deleteAdverts(ids) {
+    return request ({
+      url: controller + '/deleteAdverts',
+      method: 'post',
+      data: { ids:String(ids) }
     })
   }
-
-
 }

@@ -148,11 +148,6 @@ export default {
       tempRoute: {}
     }
   },
-  computed: {
-    lang() {
-      return this.$store.getters.language
-    }
-  },
   watch: {
     articleId(val) {
       advertService.getAdvertById(val).then(res => {
@@ -160,7 +155,8 @@ export default {
         let data = res.data.record
         this.postForm = data
         this.images = data.images.split(',')
-        return
+      }).catch(err => {
+        console.log(err)
       })
     }
   },
@@ -196,7 +192,7 @@ export default {
       })
     },
     setTagsViewTitle() {
-      const title = this.lang === 'zh' ? '编辑文章' : 'Edit Article'
+      const title = '编辑文章'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
       this.$store.dispatch('updateVisitedView', route)
     },

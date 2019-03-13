@@ -1,20 +1,20 @@
 <template>
   <div class="app-container">
-    <div class="filter-container">
-      <!--  <el-input placeholder="输入关键字" v-model="" style="width: 200px;" class="filter-item" @keyup.enter.native=""/>
-            <el-select v-model="" placeholder="rr" clearable style="width: 90px" class="filter-item">
-       <el-option v-for="" :key="" :label="" :value=""/>
+    <div class="filter-container" style="margin-bottom: 20px;">
+       <el-input placeholder="输入关键字" v-model="listQuery.keyword" style="width: 500px;" class="filter-item"/>
+            <el-select v-model="listQuery.type" placeholder="类型" clearable style="width: 90px" class="filter-item">
+                   <el-option v-for="(value,key) in type" :key="key" :label="value" :value="key"/>
             </el-select>
-            <el-select v-model="" :placeholder="$t('table.type')" clearable class="filter-item" style="width: 130px">
-       <el-option v-for="" :key="" :label="" :value=""/>
+            <!-- <el-select v-model="" :placeholder="" clearable class="filter-item" style="width: 130px">
+                   <el-option v-for="" :key="" :label="" :value=""/>
             </el-select>
             <el-select v-model="" style="width: 140px" class="filter-item" @change="">
-       <el-option v-for="" :key="" :label="" :value=""/>
-            </el-select>
-            <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="">过分的</el-button>
-            <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="">投入太多</el-button>
-            <el-button v-waves :loading="" class="filter-item" type="primary" icon="el-icon-download" @click="">和高房价</el-button>
-            <el-checkbox v-model="" class="filter-item" style="margin-left:15px;" @change="">提供</el-checkbox> -->
+                   <el-option v-for="" :key="" :label="" :value=""/>
+            </el-select> -->
+            <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="">下架</el-button> -->
+            <!-- <el-checkbox v-model="" class="filter-item" style="margin-left:15px;" @change="">提供</el-checkbox> -->
+            <el-button :loading="listLoading" class="filter-item" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+            <el-button class="filter-item" type="danger" v-show="selectList.ids.length" @click="deleteSelect">删除</el-button>
     </div>
 
     <el-table
@@ -23,13 +23,19 @@
       element-loading-text="Loading"
       border
       fit
-      highlight-current-row>
-      <el-table-column align="center" label="ID" width="95">
+      highlight-current-row
+      :default-sort = "{prop: 'createtime', order: 'descending'}"
+      @selection-change="selectionChange">
+      <el-table-column
+        type="selection"
+        width="55">
+      </el-table-column>
+      <el-table-column align="center" prop="id" label="ID"  width="95">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="发布时间" width="200">
+      <el-table-column align="center" prop="createtime" sortable label="发布时间" width="200">
         <template slot-scope="scope">
           <i class="el-icon-time"/>
           <span>{{ scope.row.createtime }}</span>
@@ -61,13 +67,13 @@
           </el-button>
           <el-button type="success" size="mini" @click="downAd(scope.row.id)">下架
           </el-button>
-          <el-button type="danger" size="mini" @click="deleteAd(scope.row.id)">删除
+          <el-button type="danger" size="mini" @click="deleteAd(scope.row.id,list.indexOf(scope.row))">删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.size" @pagination="getList" />
       
   </div>
 </template>
@@ -95,11 +101,20 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20
+        size: 20,
+        keyword: '',
+        type:'',
+        isShow:true,
       },
-      pageNumber: 1,
-      pageSize: 20,
-      keywords: ''
+      type:Object.freeze({
+        1:'普通',
+        2:'内联',
+        3:'外联'
+      }),
+      selectList:{
+        ids:[],
+        item:[]
+      }
     }
   },
   created() {
@@ -108,12 +123,12 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      advertService.getAdvertPage(this.pageNumber, this.pageSize).then(response => {
+      advertService.getAdvertPage(this.listQuery).then(response => {
         // console.log(response.data)
         this.listLoading = false
         this.total = response.data.recordPage.totalRow
         this.list = response.data.recordPage.list
-        this.pageNumber ++
+        this.listQuery.page ++
       }).catch(err => {
         this.listLoading = false
         this.$message({
@@ -122,11 +137,50 @@ export default {
         })
       })
     },
+    search() {
+      this.listQuery.page = 1
+      this.getList()
+    },
     downAd(id) {
 
     },
-    deleteAd(id) {
-
+    deleteAd(id,index) {
+      advertService.deleteAdverts([id]).then(res => {
+        this.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+        this.list.splice(index,1)
+      }).catch(err => {
+        this.$message({
+          message: '删除失败，请稍后重试！',
+          type: 'error'
+        })
+      })
+    },
+    selectionChange(val) {
+      this.selectList.ids = []
+      this.selectList.item = val
+      for (var x in val) {
+        this.selectList.ids.push(val[x].id)
+      }
+    },
+    deleteSelect() {
+      advertService.deleteAdverts(this.selectList.ids).then(res => {
+        this.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+        for (var x in this.selectList.item) {
+          let index = this.list.indexOf(this.selectList.item[x])
+          this.list.splice(index, 1)
+        }
+      }).catch(err => {
+        this.$message({
+          message: '删除失败，请稍后重试！',
+          type: 'error'
+        })
+      })
     }
   }
 }
