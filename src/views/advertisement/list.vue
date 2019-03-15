@@ -56,9 +56,13 @@
           {{ scope.row.pageviews }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="类型" width="110" align="center">
+      <el-table-column 
+      class-name="status-col" 
+      prop="type" label="类型" width="110" align="center" 
+      :filters="[{text: '普通', value: 1}, {text: '内联', value: 2}, {text: '外联', value: 3}]"
+      :filter-method="typeFilter">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.type | statusFilter">{{ scope.row.type }}</el-tag>
+          <el-tag :type="scope.row.type | statusFilter">{{ type[scope.row.type] }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="操作" width="230" align="center">
@@ -67,7 +71,7 @@
           </el-button>
           <el-button type="success" size="mini" @click="downAd(scope.row.id)">下架
           </el-button>
-          <el-button type="danger" size="mini" @click="deleteAd(scope.row.id,list.indexOf(scope.row))">删除
+          <el-button type="danger" size="mini" @click="deleteAd(scope.row)">删除
           </el-button>
         </template>
       </el-table-column>
@@ -144,26 +148,19 @@ export default {
     downAd(id) {
 
     },
-    deleteAd(id,index) {
-      advertService.deleteAdverts([id]).then(res => {
+    deleteAd(item) {
+      advertService.deleteAdverts([item.id]).then(res => {
         this.$message({
           message: '删除成功！',
           type: 'success'
         })
-        this.list.splice(index,1)
+        this.list.splice(list.indexOf(item),1)
       }).catch(err => {
         this.$message({
           message: '删除失败，请稍后重试！',
           type: 'error'
         })
       })
-    },
-    selectionChange(val) {
-      this.selectList.ids = []
-      this.selectList.item = val
-      for (var x in val) {
-        this.selectList.ids.push(val[x].id)
-      }
     },
     deleteSelect() {
       advertService.deleteAdverts(this.selectList.ids).then(res => {
@@ -181,6 +178,17 @@ export default {
           type: 'error'
         })
       })
+    },
+    selectionChange(val) {
+      this.selectList.ids = []
+      this.selectList.item = val
+      for (var x in val) {
+        this.selectList.ids.push(val[x].id)
+      }
+    },
+    typeFilter(value, row, column) {
+      const property = column['property'];
+      return row[property] === value;
     }
   }
 }

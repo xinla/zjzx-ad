@@ -91,5 +91,18 @@ export default {
 			url: controller + '/testUserName',
 			params: { username }
 		})
+	},
+
+	/**
+	 * 获取随机自用户
+	 * @param  {[type]} userid [description]
+	 * @return {[type]}        [description]
+	 */
+	getRandomChildUser(userid) {
+		return request({
+			url: controller + '/getRandomChildUser',
+			params: { userid }
+		})
 	}
+
 }

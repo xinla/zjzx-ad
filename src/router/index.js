@@ -46,7 +46,7 @@ export const constantRouterMap = [
     meta: { title: '广告', icon: 'example' },
     children: [
       {
-        name: 'ListAd',
+        name: 'AdList',
         path: 'list',
         component: () => import('@/views/advertisement/list'),
         meta: { title: '列表', icon: 'table' }
@@ -62,6 +62,46 @@ export const constantRouterMap = [
         path: 'statistics',
         component: () => import('@/views/advertisement/statistics'),
         meta: { title: '统计', icon: 'table' }
+      }
+    ]
+  },
+
+  {
+    path: '/article',
+    component: Layout,
+    redirect: '/article/list',
+    name: 'Article',
+    meta: { title: '文章', icon: 'example' },
+    children: [
+      {
+        name: 'AdminArticle',
+        path: 'admin',
+        component: () => import('@/views/article/admin'),
+        meta: { title: '列表(管理员可用)', icon: 'table' }
+      },
+      {
+        name: 'ArticleList',
+        path: 'list',
+        component: () => import('@/views/article/list'),
+        meta: { title: '列表(编辑使用)', icon: 'table' }
+      },
+      {
+        name: 'ArticleEditPublish',
+        path: 'editPublish',
+        component: () => import('@/views/article/editPublish'),
+        meta: { title: '发布', icon: 'table' }
+      },
+      {
+        name: 'ArticleStatistics',
+        path: 'statistics',
+        component: () => import('@/views/article/statistics'),
+        meta: { title: '统计', icon: 'table' }
+      },
+      {
+        name: 'VirtualUser',
+        path: 'virtualUser',
+        component: () => import('@/views/article/virtualUser'),
+        meta: { title: '虚拟用户', icon: 'table' }
       }
     ]
   },

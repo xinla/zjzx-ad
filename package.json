@@ -14,7 +14,7 @@
     "svgo": "svgo -f src/icons/svg --config=src/icons/svgo.yml"
   },
   "dependencies": {
-    "axios": "0.18.0",
+    "axios": "^0.18.0",
     "echarts": "^4.1.0",
     "element-ui": "2.4.6",
     "fuse.js": "^3.4.3",
@@ -22,6 +22,7 @@
     "mockjs": "1.0.1-beta3",
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
+    "qs": "^6.6.0",
     "screenfull": "^4.0.1",
     "vue": "2.5.17",
     "vue-router": "3.0.1",

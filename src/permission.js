@@ -10,7 +10,7 @@ NProgress.configure({ showSpinner: false })// NProgress configuration
 const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  if (getToken()) {
+  if (localStorage.token) {
     if (to.path === '/login') {
       next({ path: '/' })
       NProgress.done() // if current page is dashboard will not trigger	afterEach hook, so manually handle it

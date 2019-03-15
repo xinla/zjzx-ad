@@ -3,19 +3,21 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
   state: {
-    token: getToken(),
+    token: localStorage.token,
     id:'',
     name: '',
     avatar: '',
-    roles: ['admin']
+    roles:''
   },
 
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+      localStorage.token = token
     },
     SET_ID: (state, id) => {
       state.id = id
+      localStorage.id = id
     },
     SET_NAME: (state, name) => {
       state.name = name
@@ -25,6 +27,11 @@ const user = {
     },
     SET_ROLES: (state, roles) => {
       state.roles = roles
+    },
+    LOGOUT: state => {
+      state.id = ''
+      state.token = ''
+      localStorage.clear()
     }
   },
 
@@ -38,14 +45,17 @@ const user = {
           // console.log(response.data)
           // return
           const data = response.data.result
-          setToken(data.token)
+          // setToken(data.token)
           commit('SET_TOKEN', data.token)
           commit('SET_ID', data.user.id)
-          localStorage.id = data.user.id
-          localStorage.logid = data.user.logid
-          localStorage.token = data.token
-          commit('SET_NAME', data.username)
+          commit('SET_NAME', data.user.username)
           commit('SET_AVATAR', GoTruth.$Tool.headerImgFilter(data.user.imageurl))
+          localStorage.logid = data.user.logid
+          if (localStorage.id <= 3 || localStorage.id == 2828) {
+            commit('SET_ROLES', 'admin')
+          } else {
+            commit('SET_ROLES', 'editor')
+          }
           resolve()
         }).catch(error => {
           reject(error)
@@ -66,9 +76,13 @@ const user = {
           } else {
             reject('getInfo: roles must be a non-null array !')
           }*/
-          commit('SET_ID', data.user.id)
-          commit('SET_NAME', data.username)
+          commit('SET_NAME', data.user.username)
           commit('SET_AVATAR', GoTruth.$Tool.headerImgFilter(data.user.imageurl))
+          if (localStorage.id <= 3 || localStorage.id == 2828) {
+            commit('SET_ROLES', 'admin')
+          } else {
+            commit('SET_ROLES', 'editor')
+          }
           resolve(response)
         }).catch(error => {
           reject(error)
@@ -80,10 +94,10 @@ const user = {
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
         userService.logOut().then(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          removeToken()
-          localStorage.clear()
+          // commit('SET_TOKEN', '')
+          // commit('SET_ROLES', [])
+          // removeToken()
+          commit('LOGOUT')
           resolve()
         }).catch(error => {
           reject(error)

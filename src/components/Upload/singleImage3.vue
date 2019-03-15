@@ -13,7 +13,8 @@
     </el-upload>
     <div class="image-preview image-app-preview" v-for="(item, index) of imageUrl">
       <div class="image-preview-wrapper">
-        <img :src="fileRoot + item">
+        <img :src="fileRoot + item" v-if="type === 'image'">
+        <img :src="fileRoot + item.thumbnail" v-else>
         <div class="image-preview-action">
           <i class="el-icon-delete" @click="rmImage(item)"/>
         </div>
@@ -29,6 +30,10 @@ import configPath from '@/configs/path'
 export default {
   name: 'SingleImageUpload3',
   props: {
+    type:{
+      type:String,
+      default:'image'
+    },
     value: {
       type: Array,
       default: []
@@ -36,7 +41,7 @@ export default {
   },
   data() {
     return {
-      fileServer: configPath.fileServer + '/file/uploadPic',
+      fileServer: configPath.fileServer + (this.type === 'image' ? '/file/uploadPic' : '/file/uploadVideo'), //uploadVideo/uploadHeadImage
       fileRoot: configPath.fileRoot + '/',
       tempUrl: '',
       dataObj: { token: '', key: '' }
@@ -59,7 +64,18 @@ export default {
       this.$emit('input', val)
     },
     handleImageSuccess(res,file,fileList) {
-      this.imageUrl.push(res.result.url)
+      if (this.type === 'image') {
+        this.imageUrl.push(res.result.url)
+        this.emitInput(this.imageUrl)
+      } else {
+        let videoInfo = {
+          filename: res.result.filename,
+          type: 2,
+          thumbnail: res.thumbnail,
+          url: res.result.url
+        }
+        this.imageUrl.push(videoInfo)
+      }
       this.emitInput(this.imageUrl)
       // this.emitInput(configPath.fileRoot + '/' + res.result.url)
     },

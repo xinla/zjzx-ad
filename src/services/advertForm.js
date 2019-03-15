@@ -19,7 +19,7 @@ export default {
 		return request ({
       url: controller + '/saveForm',
       method: 'post',
-      params: ad
+      data: ad
     })
 	},
 
@@ -32,7 +32,7 @@ export default {
 		return request ({
       url: controller + '/getNewSign',
       method: 'post',
-      params: { id }
+      data: { id }
     })
 	},
 
