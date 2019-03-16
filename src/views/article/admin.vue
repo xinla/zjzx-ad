@@ -165,7 +165,7 @@ export default {
       }
   },
   created() {
-    console.log(1)
+    // console.log(1)
     // this.getList()
     articleClassifyService.getArticleClassifyList().then(res => {
       // console.log(res.data)

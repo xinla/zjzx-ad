@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-      <h3 class="title">直击真相广告管理系统</h3>
+      <h3 class="title">直击真相后台管理系统</h3>
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -24,7 +24,7 @@
         </span>
       </el-form-item>
       <el-form-item>
-        <el-button :loading="loading" type="primary" style="width:100%;" @click.native.prevent="handleLogin">
+        <el-button :loading="loading"  style="width:100%;" @click.native.prevent="handleLogin">
           Sign in
         </el-button>
       </el-form-item>
@@ -107,7 +107,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
-$bg:#2d3a4b;
+$bg:#130e0e;
 $light_gray:#eee;
 
 /* reset element-ui css */
@@ -149,6 +149,8 @@ $light_gray:#eee;
   height: 100%;
   width: 100%;
   background-color: $bg;
+  background-image:url('../../assets/images/login-bg.jpg');
+  background-size:cover;
   .login-form {
     position: absolute;
     left: 0;
@@ -191,6 +193,16 @@ $light_gray:#eee;
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
+  }
+
+  .el-form-item {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+  }
+  .el-button {
+    color: #fff;
+    background: rgba(0,0,0,0.2);
+    border:0;
   }
 }
 </style>

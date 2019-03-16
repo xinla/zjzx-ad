@@ -49,19 +49,19 @@ export const constantRouterMap = [
         name: 'AdList',
         path: 'list',
         component: () => import('@/views/advertisement/list'),
-        meta: { title: '列表', icon: 'table' }
+        meta: { title: '列表', icon: 'list' }
       },
       {
         name: 'EditPublish',
         path: 'editPublish',
         component: () => import('@/views/advertisement/editPublish'),
-        meta: { title: '发布', icon: 'table' }
+        meta: { title: '发布', icon: 'edit' }
       },
       {
         name: 'Statistics',
         path: 'statistics',
         component: () => import('@/views/advertisement/statistics'),
-        meta: { title: '统计', icon: 'table' }
+        meta: { title: '统计', icon: 'chart' }
       }
     ]
   },
@@ -71,7 +71,7 @@ export const constantRouterMap = [
     component: Layout,
     redirect: '/article/list',
     name: 'Article',
-    meta: { title: '文章', icon: 'example' },
+    meta: { title: '文章', icon: 'documentation' },
     children: [
       {
         name: 'AdminArticle',
@@ -83,25 +83,38 @@ export const constantRouterMap = [
         name: 'ArticleList',
         path: 'list',
         component: () => import('@/views/article/list'),
-        meta: { title: '列表(编辑使用)', icon: 'table' }
+        meta: { title: '列表(编辑使用)', icon: 'list' }
       },
       {
         name: 'ArticleEditPublish',
         path: 'editPublish',
         component: () => import('@/views/article/editPublish'),
-        meta: { title: '发布', icon: 'table' }
+        meta: { title: '发布', icon: 'edit' }
       },
       {
         name: 'ArticleStatistics',
         path: 'statistics',
         component: () => import('@/views/article/statistics'),
-        meta: { title: '统计', icon: 'table' }
+        meta: { title: '统计', icon: 'chart' }
       },
       {
         name: 'VirtualUser',
         path: 'virtualUser',
         component: () => import('@/views/article/virtualUser'),
-        meta: { title: '虚拟用户', icon: 'table' }
+        meta: { title: '子用户', icon: 'peoples' }
+      }
+    ]
+  },
+
+  {
+    path: '/icon',
+    component: Layout,
+    children: [
+      {
+        name: 'Icon',
+        path: 'index',
+        component: () => import('@/views/svg-icons/index'),
+        meta: { title: '图标', icon: 'icon' }
       }
     ]
   },
