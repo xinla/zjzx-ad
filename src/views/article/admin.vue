@@ -152,7 +152,8 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-      if (GoTruth.$store.state.user.roles === 'admi5n') {
+      if (GoTruth.$store.state.user.roles === 'admin') {
+        next()
       } else {
         GoTruth.$prompt('请输入授权码', '提示', {
           inputPattern: /8698/,
@@ -204,36 +205,46 @@ export default {
       this.getList()
     },
     deleteArticle(item) {
-      articleService.deleteArticleByIds([item.id]).then(res => {
-        this.$message({
-          message: '删除成功！',
-          type: 'success'
-        })
-        this.list.splice(list.indexOf(item),1)
-      }).catch(err => {
-        this.$message({
-          message: '删除失败，请稍后重试！',
-          type: 'error'
+      this.$confirm('确定要删除吗?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        articleService.deleteArticleByIds([item.id]).then(res => {
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+          this.list.splice(this.list.indexOf(item),1)
+        }).catch(err => {
+          this.$message({
+            message: '删除失败，请稍后重试！',
+            type: 'error'
+          })
         })
       })
+
     },
     deleteSelect() {
-      articleService.deleteArticleByIds(this.selectList.ids).then(res => {
-        // console.log(res)
-        this.$message({
-          message: '删除成功！',
-          type: 'success'
-        })
-        for (var x in this.selectList.item) {
-          let index = this.list.indexOf(this.selectList.item[x])
-          this.list.splice(index, 1)
-        }
-      }).catch(err => {
-        this.$message({
-          message: '删除失败，请稍后重试！',
-          type: 'error'
+      this.$confirm('确定要删除吗?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        articleService.deleteArticleByIds(this.selectList.ids).then(res => {
+          // console.log(res)
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+          for (var x in this.selectList.item) {
+            let index = this.list.indexOf(this.selectList.item[x])
+            this.list.splice(index, 1)
+          }
+        }).catch(err => {
+          this.$message({
+            message: '删除失败，请稍后重试！',
+            type: 'error'
+          })
         })
       })
+      
     },
     selectionChange(val) {
       this.selectList.ids = []

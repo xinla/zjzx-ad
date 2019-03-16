@@ -119,7 +119,7 @@ import articleClassifyService from '@/services/articleClassify'
 const defaultForm = {
   title: '', // 文章题目
   content: '', // 文章内容
-  author: undefined,
+  author: '',
   classify:'', // "文章分类",
   type: 3,
   today: false, // ”是否今日真相”,
@@ -173,7 +173,7 @@ export default {
       rules: {
         title: [{ validator: validateRequire }],
         classify: [{ validator: validateRequire, trigger: 'blur' }],
-        author: [{ validator: validateRequire }],
+        author: [{ validator: validateRequire, trigger: 'blur' }],
         // link: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
       tempRoute: {},
@@ -227,6 +227,7 @@ export default {
   },
   methods: {
     submitForm() {
+      // console.log(this.postForm)
       this.loading = true
       if (this.virtualUserList.length === 0) {
         this.postForm.author = parseInt(localStorage.id)
@@ -235,7 +236,7 @@ export default {
         if (valid) {
           if (this.postForm.type === 3) {
             articleService.publishArticle(this.postForm).then(res => {
-              console.log(res)
+              // console.log(res)
               this.$notify({
                 title: '成功',
                 message: '发布文章成功',
@@ -248,7 +249,7 @@ export default {
             })
           } else {
             articleService.publishArticle(this.postForm, this.ArticleFile).then(res => {
-              console.log('---' + res)
+              // console.log('---' + res)
               this.$notify({
                 title: '成功',
                 message: '发布文章成功',
@@ -261,6 +262,7 @@ export default {
             })
           }
         } else {
+          this.loading = false
           console.log('error submit!!')
           return false
         }

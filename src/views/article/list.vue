@@ -18,10 +18,11 @@
       highlight-current-row
       :default-sort = "{prop: 'publishtime', order: 'descending'}"
       @selection-change="selectionChange">
-      <el-table-column
+      
+      <!-- <el-table-column
         type="selection"
         width="55">
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column align="center" prop="id" label="ID"  width="95">
         <template slot-scope="scope">
@@ -168,11 +169,11 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      articleService.getArticleByUser(this.listQuery).then(response => {
+      articleService.articlePage(this.listQuery).then(response => {
         this.listLoading = false
         // console.log(response.data)
         // return
-        let data = response.data.result
+        let data = response.data
         this.total = data.recordPage.totalRow
         this.list = data.recordPage.list
         // this.listQuery.page ++
@@ -189,34 +190,42 @@ export default {
       this.getList()
     },
     deleteArticle(item) {
-      articleService.deleteArticleByIds([item.id]).then(res => {
-        this.$message({
-          message: '删除成功！',
-          type: 'success'
-        })
-        this.list.splice(list.indexOf(item),1)
-      }).catch(err => {
-        this.$message({
-          message: '删除失败，请稍后重试！',
-          type: 'error'
+      this.$confirm('确定要删除吗?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        articleService.deleteArticleByIds([item.id]).then(res => {
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+          this.list.splice(this.list.indexOf(item),1)
+        }).catch(err => {
+          this.$message({
+            message: '删除失败，请稍后重试！',
+            type: 'error'
+          })
         })
       })
     },
     deleteSelect() {
-      articleService.deleteArticleByIds(this.selectList.ids).then(res => {
-        console.log(res)
-        this.$message({
-          message: '删除成功！',
-          type: 'success'
-        })
-        for (var x in this.selectList.item) {
-          let index = this.list.indexOf(this.selectList.item[x])
-          this.list.splice(index, 1)
-        }
-      }).catch(err => {
-        this.$message({
-          message: '删除失败，请稍后重试！',
-          type: 'error'
+      this.$confirm('确定要删除吗?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        articleService.deleteArticleByIds(this.selectList.ids).then(res => {
+          // console.log(res)
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+          for (var x in this.selectList.item) {
+            let index = this.list.indexOf(this.selectList.item[x])
+            this.list.splice(index, 1)
+          }
+        }).catch(err => {
+          this.$message({
+            message: '删除失败，请稍后重试！',
+            type: 'error'
+          })
         })
       })
     },
