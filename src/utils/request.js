@@ -8,13 +8,20 @@ import configPath from '@/configs/path'
 // 创建axios实例
 const service = axios.create({
   baseURL: configPath.successServer, // api 的 base_url
-  timeout: 5000, // 请求超时时间
+  // timeout: 5000, // 请求超时时间
   transformRequest: [function (data) {
     let newData = new URLSearchParams()
     for (let key in data) {
       if (data.hasOwnProperty(key)) {
-        data[key] || (data[key] = '')
-        typeof data[key] === 'string' || (data[key] = JSON.stringify(data[key])) // 防止字符串参数再被JSON套一层引号
+        if (data[key] !== undefined) {
+          if (Array.isArray(data[key])) {
+            data[key] = String(data[key])
+          }else{
+            typeof data[key] === 'string' || (data[key] = JSON.stringify(data[key])) // 防止字符串参数再被JSON套一层引号
+          }
+        }else{
+          data[key] = ''
+        }
         newData.append(key, data[key])
       }
     }

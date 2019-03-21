@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import configPath from '@/configs/path'
 
 const controller = 'http://wx.zjzx.xyz/zjzx-fictitious-user/user'
 const token = localStorage.token
@@ -51,11 +50,11 @@ export default {
 	 * @param  {[type]} userid [description]
 	 * @return {[type]}        [description]
 	 */
-	getChildUserList() {
+	getChildUserList(id) {
 		return request({
 			url: controller + '/getChildUserList',
 			method: 'post',
-			data: { userid }
+			data: { userid: id || userid }
 		})
 	},
 

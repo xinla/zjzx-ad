@@ -31,7 +31,7 @@ export default {
    */
   articlePage(query) {
     return request ({
-      url: controller + '/articlePage',
+      url: controller + '/getAllArticlePage',
       params: { 
         page: query.page, 
         size: query.size, 
@@ -39,7 +39,7 @@ export default {
         author: query.author,
         type: query.type,
         classify: query.classify,
-        state: 3
+        state: query.state
       }
     })
   },
@@ -96,6 +96,21 @@ export default {
     return request ({
       url: controller + '/deleteArticleByIds2',
       params: { userid, token, ids:String(ids) }
+    })
+  },
+
+  /**
+   * 文章审核
+   * @param  {[type]} articleid     [description]
+   * @param  {[type]} state         ["审核状态"  // 3:审核通过,4:审核不通过]
+   * @param  {[type]} checknoreason ["审核通过理由" //如果state = 4 该字段必填]
+   * @return {[type]}               [description]
+   */
+  articleCheck(articleid, state, checknoreason) {
+    return request ({
+      url: controller + '/articleCheck',
+      method:'post',
+      data: { userid, token, articleid, state, checknoreason }
     })
   }
 }

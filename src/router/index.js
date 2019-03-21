@@ -98,25 +98,64 @@ export const constantRouterMap = [
         meta: { title: '统计', icon: 'chart' }
       },
       {
-        name: 'VirtualUser',
-        path: 'virtualUser',
-        component: () => import('@/views/article/virtualUser'),
+        name: 'ChildUser',
+        path: 'childUser',
+        component: () => import('@/views/article/childUser'),
         meta: { title: '子用户', icon: 'peoples' }
       }
     ]
   },
 
   {
-    path: '/icon',
+    path: '/feebback',
     component: Layout,
     children: [
       {
-        name: 'Icon',
+        name: 'Feebback',
         path: 'index',
-        component: () => import('@/views/svg-icons/index'),
-        meta: { title: '图标', icon: 'icon' }
+        component: () => import('@/views/feedback/index'),
+        meta: { title: '反馈', icon: 'form' }
       }
-    ]
+    ],
+  },
+
+  {
+    path: '/report',
+    component: Layout,
+    children: [
+      {
+        name: 'Report',
+        path: 'index',
+        component: () => import('@/views/report/index'),
+        meta: { title: '举报', icon: 'form' }
+      }
+    ],
+  },
+
+  {
+    path: '/kyb',
+    component: Layout,
+    meta: { title: '康有保', icon: 'form' },
+    children: [
+      {
+        name: 'KybArticle',
+        path: 'index',
+        component: () => import('@/views/kyb/article'),
+        meta: { title: '资讯列表', icon: 'form' }
+      },
+      {
+        name: 'KybArticleEditPublish',
+        path: 'editPublish',
+        component: () => import('@/views/kyb/editPublish'),
+        meta: { title: '资讯发布', icon: 'edit' }
+      },
+      {
+        name: 'KybMessage',
+        path: 'message',
+        component: () => import('@/views/kyb/message'),
+        meta: { title: '留言列表', icon: 'chart' }
+      },
+    ],
   },
 
   {
@@ -135,10 +174,36 @@ export const constantRouterMap = [
   {
     path: 'externalLink',
     component: Layout,
+    meta: { title: '外链', icon: 'tree' },
     children: [
       {
         path: 'http://zjzx.xyz',
-        meta: { title: '外链', icon: 'link' }
+        meta: { title: '直击真相pc', icon: 'link' }
+      },
+      {
+        path: 'http://m.zjzx.xyz',
+        meta: { title: '直击真相web', icon: 'link' }
+      },
+      {
+        path: 'https://mobile.umeng.com/platform/5c41951ef1f5567e500014c2/channels/list',
+        meta: { title: '直击真相统计', icon: 'link' }
+      },
+      {
+        path: 'http://kangyoubao.net',
+        meta: { title: '康有保官网', icon: 'link' }
+      },
+    ]
+  },
+
+  {
+    path: '/icon',
+    component: Layout,
+    children: [
+      {
+        name: 'Icon',
+        path: 'index',
+        component: () => import('@/views/svg-icons/index'),
+        meta: { title: '图标', icon: 'icon' }
       }
     ]
   },

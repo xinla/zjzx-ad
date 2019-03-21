@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import configPath from '@/configs/path'
 
 const controller = '/zjzx-user/user'
 const token = localStorage.token

@@ -61,7 +61,8 @@
         <el-form-item label="内容:" label-width="60px" style="margin-bottom: 5px;">
         </el-form-item>
         <el-form-item prop="content" style="margin-bottom: 30px;">
-          <Tinymce ref="editor" :height="400" v-model="postForm.content" />
+          <Tinymce ref="editor" :height="400" v-model="postForm.content" key="1" v-if="editorSwitch" />
+          <Tinymce ref="editor" :height="400" v-model="postForm.content" key="2" v-else />
         </el-form-item>
 
       </div>
@@ -145,13 +146,14 @@ export default {
         // content: [{ validator: validateRequire }],
         link: [{ validator: validateSourceUri, trigger: 'blur' }]
       },
-      tempRoute: {}
+      tempRoute: {},
+      editorSwitch:false
     }
   },
   watch: {
     articleId(val) {
       advertService.getAdvertById(val).then(res => {
-        console.log(res)
+        // console.log(res)
         let data = res.data.record
         this.postForm = data
         this.images = data.images.split(',')
@@ -166,12 +168,6 @@ export default {
    })
   },
   created() {
-    if (this.isEdit) {
-      const id = this.$route.params && this.$route.params.id
-      this.fetchData(id)
-    } else {
-      this.postForm = Object.assign({}, defaultForm)
-    }
 
     // Why need to make a copy of this.$route here?
     // Because if you enter this page and quickly switch tag, may be in the execution of the setTagsViewTitle function, this.$route is no longer pointing to the current page
@@ -179,18 +175,6 @@ export default {
     this.tempRoute = Object.assign({}, this.$route)
   },
   methods: {
-    fetchData(id) {
-      fetchArticle(id).then(response => {
-        this.postForm = response.data
-        // Just for test
-        this.postForm.title += `   Article Id:${this.postForm.id}`
-
-        // Set tagsview title
-        this.setTagsViewTitle()
-      }).catch(err => {
-        console.log(err)
-      })
-    },
     setTagsViewTitle() {
       const title = '编辑文章'
       const route = Object.assign({}, this.tempRoute, { title: `${title}-${this.postForm.id}` })
@@ -203,13 +187,15 @@ export default {
       this.$refs.postForm.validate(valid => {
         if (valid) {
           advertService.saveAdvert(this.postForm).then(res => {
-            console.log(res)
+            // console.log(res)
             this.$notify({
               title: '成功',
               message: '发布文章成功',
               type: 'success',
               duration: 2000
             })
+            this.postForm = Object.assign({}, defaultForm)
+            this.editorSwitch = !this.editorSwitch
           }).catch(err => {
             console.log(err)
           })

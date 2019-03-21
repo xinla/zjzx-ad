@@ -1,6 +1,5 @@
 import request from '@/utils/request'
-import configPath from '@/configs/path'
-import axios from 'axios'
+
 const controller = '/zjzx-advert/advert'
 
 export default {

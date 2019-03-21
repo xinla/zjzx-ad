@@ -2,11 +2,14 @@
   <div class="app-container">
     <div class="filter-container" style="margin-bottom: 20px;">
        <el-input placeholder="输入关键字" v-model="listQuery.keyword" style="width: 500px;" class="filter-item"/>
-            <el-select v-model="listQuery.classify" placeholder="分类" clearable style="width: 90px" class="filter-item">
-                   <el-option v-for="(item,index) in classify" :key="index" :label="item.text" :value="item.value"/>
-            </el-select>
-            <el-button :loading="listLoading" class="filter-item" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-            <el-button class="filter-item" type="danger" v-show="selectList.ids.length" @click="deleteSelect">删除</el-button>
+      <el-select v-model="listQuery.classify" placeholder="分类" clearable style="width: 90px" class="filter-item">
+        <el-option v-for="(item,index) in classify" :key="index" :label="item.text" :value="item.value"/>
+      </el-select>
+      <el-select v-model="listQuery.state" placeholder="审核状态" clearable style="width: 120px" class="filter-item">
+        <el-option v-for="(value,key) in checkList" :key="key" :label="value" :value="parseInt(key)"/>
+      </el-select>
+      <el-button :loading="listLoading" class="filter-item" type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+      <el-button class="filter-item" type="danger" v-show="selectList.ids.length" @click="deleteSelect">删除</el-button>
     </div>
 
     <el-table
@@ -18,6 +21,7 @@
       highlight-current-row
       :default-sort = "{prop: 'publishtime', order: 'descending'}"
       @selection-change="selectionChange">
+
       <el-table-column
         type="selection"
         width="55">
@@ -69,7 +73,10 @@
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state === 1 || scope.row.state === 2">{{ scope.row.state | checkStateFilter }}</el-tag>
           <el-tag v-else-if="scope.row.state === 3" type="success">{{ scope.row.state | checkStateFilter }}</el-tag>
-          <el-tag v-else type="danger">{{ scope.row.state | checkStateFilter }}</el-tag>
+          <el-tooltip class="item" effect="dark" :content="scope.row.checknoreason" placement="bottom" v-else>
+            <el-tag  type="danger">{{ scope.row.state | checkStateFilter }}</el-tag>
+          </el-tooltip>
+          
         </template>
       </el-table-column>
 
@@ -77,8 +84,8 @@
         <template slot-scope="scope">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="$Tool.goPage({name:'ArticleEditPublish',query:{articleId:scope.row.id}})">
           </el-button>
-          <!-- <el-button type="success" size="mini" icon="el-icon-document" @click="downAd(scope.row.id)">
-          </el-button> -->
+          <el-button type="success" size="mini" icon="el-icon-view" @click="showCheck(scope.row)">
+          </el-button>
           <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteArticle(scope.row)">
           </el-button>
         </template>
@@ -87,7 +94,14 @@
     </el-table>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.size" @pagination="getList" />
-      
+
+    <div class="mask" v-show="check.isShow" @click.self="check.isShow = false">
+      <div class="cc" style="">
+        <preview :article="check.article" :articleId2="check.article.id"></preview>
+        <check :articleId="check.article.id" @close="check.isShow = false"></check>
+      </div>
+    </div>
+    
   </div>
 </template>
 
@@ -97,9 +111,18 @@ import userService from '@/services/user'
 import advertService from '@/services/advert'
 import articleClassifyService from '@/services/articleClassify'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-
+const checkList = {
+  1: '正在审核',
+  2: '人工审核中',
+  3: '审核通过',
+  4: '审核不通过'
+}
 export default {
-  components: { Pagination },
+  components: { 
+    Pagination, 
+    Preview: () => import('./components/Preview'),
+    Check: () => import('./components/Check'),
+  },
   filters: {
     statusFilter(val) {
       const statusMap = {
@@ -111,13 +134,7 @@ export default {
       return statusMap[val]
     },
     checkStateFilter(val) {
-      const statusMap = {
-        1: '正在审核',
-        2: '人工审核中',
-        3: '审核通过',
-        4: '审核不通过'
-      }
-      return statusMap[val]
+      return checkList[val]
     },
     typeFilter(val) {
       const statusMap = {
@@ -130,25 +147,30 @@ export default {
   },
   data() {
     return {
-      list: null,
+      list: [],
       total: 0,
       listLoading: false,
       listQuery: {
         page: 1,
         size: 20,
-        type:'',
+        type: '',
         keyword: '',
-        author:'',
-        classify:''
+        author: '',
+        classify: '',
+        state:''
       },
-      classify:[
+      classify: [
         {},{},{},{},{},{},{}
       ],
-      selectList:{
+      selectList: {
         ids:[],
         item:[]
       },
-
+      check: {
+        isShow:false,
+        article:{},
+      },
+      checkList,
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -167,13 +189,11 @@ export default {
   },
   created() {
     // console.log(1)
-    // this.getList()
+    this.getList()
     articleClassifyService.getArticleClassifyList().then(res => {
       // console.log(res.data)
       let temp = res.data.result.classfyList
       for (var i = 0; i < temp.length; i++ ) {
-        // this.classify[i].text = temp[i].classifyname
-        // this.classify[i].value = temp[i].classifycode
         let index = temp[i].classifycode - 1
         this.$set(this.classify[index], 'text', temp[index].classifyname)
         this.$set(this.classify[index], 'value', temp[index].classifycode)
@@ -184,6 +204,7 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      // console.log(this.listQuery)
       articleService.articlePage(this.listQuery).then(response => {
         this.listLoading = false
         // console.log(response.data)
@@ -191,13 +212,9 @@ export default {
         let data = response.data
         this.total = data.recordPage.totalRow
         this.list = data.recordPage.list
-        // this.listQuery.page ++
       }).catch(err => {
         this.listLoading = false
-        this.$message({
-          message: '获取失败，请稍后重试！',
-          type: 'error'
-        })
+        this.$message.error('获取失败，请稍后重试！' + err)
       })
     },
     search() {
@@ -209,16 +226,10 @@ export default {
         type: 'warning'
       }).then(() => {
         articleService.deleteArticleByIds([item.id]).then(res => {
-          this.$message({
-            message: '删除成功！',
-            type: 'success'
-          })
+          this.$message.success('删除成功！')
           this.list.splice(this.list.indexOf(item),1)
         }).catch(err => {
-          this.$message({
-            message: '删除失败，请稍后重试！',
-            type: 'error'
-          })
+          this.$message.error('删除失败，请稍后重试！' + err)
         })
       })
 
@@ -229,19 +240,13 @@ export default {
       }).then(() => {
         articleService.deleteArticleByIds(this.selectList.ids).then(res => {
           // console.log(res)
-          this.$message({
-            message: '删除成功！',
-            type: 'success'
-          })
+          this.$message.success('删除成功！')
           for (var x in this.selectList.item) {
             let index = this.list.indexOf(this.selectList.item[x])
             this.list.splice(index, 1)
           }
         }).catch(err => {
-          this.$message({
-            message: '删除失败，请稍后重试！',
-            type: 'error'
-          })
+          this.$message.error('删除失败，请稍后重试！' + err)
         })
       })
       
@@ -262,20 +267,38 @@ export default {
     },
     authorName(item) {
       if (item.author == localStorage.id) {
-        return localStorage.username
+        return this.$store.state.user.name
       } else {
         userService.getUserById(item.author).then(res => {
-          // console.log(res.data)
+          // console.log(res.data.result)
           let index = this.list.indexOf(item)
-          this.$set(this.list[index], 'userName', res.data.result.user.username)
-          })
+          try {
+            this.$set(this.list[index], 'userName', res.data.result.user.username)
+          } catch(err) {
+            console.log(err)
+          }
+        })
       }
     },
     isOwner(userId) {
       return userId == localStorage.id
+    },
+    showCheck(article) {
+      this.check.article = article
+      this.check.isShow = true
     }
-
   }
 
 }
 </script>
+
+<style type="text/css" scoped>
+  .mask{
+    z-index: 9;
+  }
+  .cc{
+    position: relative;
+    width: 60%;
+    background: #fff;
+  }
+</style>

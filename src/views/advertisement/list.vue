@@ -69,7 +69,7 @@
         <template slot-scope="scope">
           <el-button type="primary" size="mini" @click="$Tool.goPage({name:'EditPublish',query:{articleId:scope.row.id}})">编辑
           </el-button>
-          <el-button type="success" size="mini" @click="downAd(scope.row.id)">下架
+          <el-button type="success" size="mini" @click="check(scope.row.id)">下架
           </el-button>
           <el-button type="danger" size="mini" @click="deleteAd(scope.row)">删除
           </el-button>
@@ -135,47 +135,41 @@ export default {
         this.listQuery.page ++
       }).catch(err => {
         this.listLoading = false
-        this.$message({
-          message: '获取失败，请稍后重试！',
-          type: 'error'
-        })
+        this.$message.error('获取失败，请稍后重试！' + err)
       })
     },
     search() {
       this.listQuery.page = 1
       this.getList()
     },
-    downAd(id) {
-
+    check(id) {
+      
     },
     deleteAd(item) {
-      advertService.deleteAdverts([item.id]).then(res => {
-        this.$message({
-          message: '删除成功！',
-          type: 'success'
-        })
-        this.list.splice(list.indexOf(item),1)
-      }).catch(err => {
-        this.$message({
-          message: '删除失败，请稍后重试！',
-          type: 'error'
+      this.$confirm('确定要删除吗?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        advertService.deleteAdverts([item.id]).then(res => {
+          this.$message.success('删除成功！')
+          this.list.splice(this.list.indexOf(item),1)
+        }).catch(err => {
+          this.$message.error('删除失败，请稍后重试！' + err)
         })
       })
+
     },
     deleteSelect() {
-      advertService.deleteAdverts(this.selectList.ids).then(res => {
-        this.$message({
-          message: '删除成功！',
-          type: 'success'
-        })
-        for (var x in this.selectList.item) {
-          let index = this.list.indexOf(this.selectList.item[x])
-          this.list.splice(index, 1)
-        }
-      }).catch(err => {
-        this.$message({
-          message: '删除失败，请稍后重试！',
-          type: 'error'
+      this.$confirm('确定要删除吗?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        advertService.deleteAdverts(this.selectList.ids).then(res => {
+          this.$message.success('删除成功！')
+          for (var x in this.selectList.item) {
+            let index = this.list.indexOf(this.selectList.item[x])
+            this.list.splice(index, 1)
+          }
+        }).catch(err => {
+          this.$message.error('删除失败，请稍后重试！' + err)
         })
       })
     },

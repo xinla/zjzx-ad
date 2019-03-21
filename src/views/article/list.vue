@@ -78,7 +78,7 @@
         <template slot-scope="scope" v-if="isOwner(scope.row.author)">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="$Tool.goPage({name:'ArticleEditPublish',query:{articleId:scope.row.id}})">
           </el-button>
-          <!-- <el-button type="success" size="mini" icon="el-icon-document" @click="downAd(scope.row.id)">
+          <!-- <el-button type="success" size="mini" icon="el-icon-document" @click="check(scope.row.id)">
           </el-button> -->
           <el-button type="danger" size="mini" icon="el-icon-delete" @click="deleteArticle(scope.row)">
           </el-button>
@@ -179,10 +179,7 @@ export default {
         // this.listQuery.page ++
       }).catch(err => {
         this.listLoading = false
-        this.$message({
-          message: '获取失败，请稍后重试！',
-          type: 'error'
-        })
+        this.$message.error('删除失败，请稍后重试！ ' + err)
       })
     },
     search() {
@@ -194,16 +191,10 @@ export default {
         type: 'warning'
       }).then(() => {
         articleService.deleteArticleByIds([item.id]).then(res => {
-          this.$message({
-            message: '删除成功！',
-            type: 'success'
-          })
+          this.$message.success('删除成功！')
           this.list.splice(this.list.indexOf(item),1)
         }).catch(err => {
-          this.$message({
-            message: '删除失败，请稍后重试！',
-            type: 'error'
-          })
+          this.$message.error('删除失败，请稍后重试！' + err)
         })
       })
     },
@@ -213,19 +204,13 @@ export default {
       }).then(() => {
         articleService.deleteArticleByIds(this.selectList.ids).then(res => {
           // console.log(res)
-          this.$message({
-            message: '删除成功！',
-            type: 'success'
-          })
+          this.$message.success('删除成功！')
           for (var x in this.selectList.item) {
             let index = this.list.indexOf(this.selectList.item[x])
             this.list.splice(index, 1)
           }
         }).catch(err => {
-          this.$message({
-            message: '删除失败，请稍后重试！',
-            type: 'error'
-          })
+          this.$message.error('删除失败，请稍后重试！' + err)
         })
       })
     },
@@ -245,7 +230,7 @@ export default {
     },
     authorName(item) {
       if (item.author == localStorage.id) {
-        return localStorage.username
+        return this.$store.state.user.name
       } else {
         userService.getUserById(item.author).then(res => {
           // console.log(res.data)

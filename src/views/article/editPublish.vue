@@ -73,13 +73,14 @@
           </el-col>
         </el-row>
 
-        <el-form-item label="内容:" label-width="50px" style="margin-bottom: 5px;">
+        <el-form-item label="内容:" label-width="50px">
           <el-button size="medium" type="primary" plain @click="postForm.type = 3">图文</el-button>
           <el-button size="medium" type="primary" plain @click="postForm.type = 2">视频</el-button>
         </el-form-item>
 
-        <el-form-item prop="content" style="margin-bottom: 30px;" v-if="postForm.type === 3">
-          <Tinymce ref="editor" :height="400" v-model="postForm.content" />
+        <el-form-item prop="content" style="margin-bottom: 30px;" v-if="postForm.type !== 2">
+          <Tinymce ref="editor" :height="400" v-model="postForm.content" key="1" v-if="editorSwitch" />
+          <Tinymce ref="editor" :height="400" v-model="postForm.content" key="2" v-else />
         </el-form-item>
 
         <!-- <el-form-item prop="content" style="margin-bottom: 30px;" v-if="postForm.type === 2">
@@ -93,7 +94,7 @@
           <input type="file" id="upvideo" accept="video/*" @change="uploadFile" style="display: none;">
         </el-form-item> -->
 
-        <el-form-item prop="ArticleFile" label-width="60px" label="封面:" style="margin-bottom: 30px;" v-if="postForm.type !== 3">
+        <el-form-item prop="ArticleFile" label-width="50px" label="文件:" style="margin-bottom: 30px;" v-if="postForm.type !== 3">
           <Upload v-model="ArticleFile" type="video" />
         </el-form-item>
 
@@ -166,6 +167,7 @@ export default {
       articleId:undefined,
       classifyList:[],
       virtualUserList:[],
+      editorSwitch:false,
       postForm: Object.assign({}, defaultForm),
       loading: false,
       userListOptions: [],
@@ -245,6 +247,7 @@ export default {
               })
               this.loading = false
               this.postForm = Object.assign({}, defaultForm)
+              this.editorSwitch = !this.editorSwitch
               this.ArticleFile = []
             })
           } else {

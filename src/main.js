@@ -20,6 +20,13 @@ import '@/permission' // permission control
 // 引用功能函数
 import Tool from '@/utils/methods'
 Vue.use(Tool);
+
+// 图片/视频上传
+import Upload from '@/components/Upload/singleImage3'
+Vue.component('upload', Upload)
+// 编辑器
+import Tinymce from '@/components/Tinymce'
+Vue.component('tinymce', Tinymce)
 /**
  * This project originally used easy-mock to simulate data,
  * but its official service is very unstable,
