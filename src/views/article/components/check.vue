@@ -34,19 +34,17 @@ export default {
 				return;
 			}
       articleService.articleCheck(this.articleId, state, this.reason).then(res => {
-      	console.log(res.data)
-        this.$message.success('操作成功！')
-        this.close()
+      	// console.log(res.data)
+        this.$message.success('审核成功！')
+        state === 3 && this.$emit("pass")
+        state === 4 && this.$emit("noPass")
+        
       })
     },
     pass() {
     	this.check(3)
     	this.isNo = false
-    	this.close()
     },
-    close() {
-    	this.$emit("close")
-    }
 	}
 }
 </script>

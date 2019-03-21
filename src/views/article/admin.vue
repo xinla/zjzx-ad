@@ -73,10 +73,11 @@
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state === 1 || scope.row.state === 2">{{ scope.row.state | checkStateFilter }}</el-tag>
           <el-tag v-else-if="scope.row.state === 3" type="success">{{ scope.row.state | checkStateFilter }}</el-tag>
+
           <el-tooltip class="item" effect="dark" :content="scope.row.checknoreason" placement="bottom" v-else>
             <el-tag  type="danger">{{ scope.row.state | checkStateFilter }}</el-tag>
           </el-tooltip>
-          
+
         </template>
       </el-table-column>
 
@@ -96,9 +97,12 @@
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.size" @pagination="getList" />
 
     <div class="mask" v-show="check.isShow" @click.self="check.isShow = false">
-      <div class="cc" style="">
-        <preview :article="check.article" :articleId2="check.article.id"></preview>
-        <check :articleId="check.article.id" @close="check.isShow = false"></check>
+      <div class="cc">
+        <div style="position: relative;left: 48%;padding: 20px 0 10px;">审核</div>
+        <preview :article="check.article"></preview>
+        <check :articleId="check.article.id" 
+        @pass="pass" 
+        @noPass="noPass"></check>
       </div>
     </div>
     
@@ -286,6 +290,14 @@ export default {
     showCheck(article) {
       this.check.article = article
       this.check.isShow = true
+    },
+    pass() {
+      this.list[this.list.indexOf(this.check.article)].state = 3
+      this.check.isShow = false
+    },
+    noPass() {
+      this.list[this.list.indexOf(this.check.article)].state = 4
+      this.check.isShow = false
     }
   }
 
@@ -300,5 +312,6 @@ export default {
     position: relative;
     width: 60%;
     background: #fff;
+    border-radius: 10px;
   }
 </style>
