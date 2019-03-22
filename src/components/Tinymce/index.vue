@@ -49,16 +49,7 @@ export default {
       hasChange: false,
       hasInit: false,
       tinymceId: this.id,
-      fullscreen: false,
-      languageTypeList: {
-        'zh': 'zh_CN',
-        'en': 'en',
-      }
-    }
-  },
-  computed: {
-    language() {
-      return this.languageTypeList[this.$store.getters.language]
+      fullscreen: false
     }
   },
   watch: {
@@ -67,10 +58,6 @@ export default {
         this.$nextTick(() =>
           window.tinymce.get(this.tinymceId).setContent(val || ''))
       }
-    },
-    language() {
-      this.destroyTinymce()
-      this.$nextTick(() => this.initTinymce())
     }
   },
   mounted() {
@@ -89,7 +76,7 @@ export default {
     initTinymce() {
       const _this = this
       window.tinymce.init({
-        language: this.language,
+        language: 'zh_CN',
         selector: `#${this.tinymceId}`,
         height: this.height,
         body_class: 'panel-body ',
@@ -99,6 +86,8 @@ export default {
         plugins: plugins,
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
+        // powerpaste_html_import: 'clear',
+        // powerpaste_allow_local_images: false,
         code_dialog_height: 450,
         code_dialog_width: 1000,
         advlist_bullet_styles: 'square',

@@ -177,7 +177,8 @@ export default {
       checkList,
     }
   },
-  beforeRouteEnter(to, from, next) {
+  // 授权码
+  /*beforeRouteEnter(to, from, next) {
       if (GoTruth.$store.state.user.roles === 'admin') {
         next()
       } else {
@@ -186,11 +187,12 @@ export default {
           inputErrorMessage: '授权码不正确'
         }).then(({ value }) => {
           next()
+          GoTruth.$store.state.user.roles = 'admin'
         }).catch(err => {
           next('/')
         })
       }
-  },
+  },*/
   created() {
     // console.log(1)
     this.getList()
