@@ -72,6 +72,7 @@ service.interceptors.response.use(
           })
         })
       } else {
+        console.warn('err: ' + JSON.stringify(res)) // for debug
         Message({
           message: res,
           type: 'error',
@@ -82,7 +83,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.warn('err' + error) // for debug
     Message({
       message: error.message,
       type: 'error',

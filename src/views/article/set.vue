@@ -92,8 +92,6 @@ export default {
 			articleClassifyService.getAllClassifyList().then(res => {
 				this.classifyList = res.data.result.classfyList
 				// console.log(this.classifyList)
-			}).catch(err => {
-				console.log(err)
 			})
 		},
 		add() {
