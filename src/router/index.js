@@ -102,6 +102,12 @@ export const constantRouterMap = [
         path: 'childUser',
         component: () => import('@/views/article/childUser'),
         meta: { title: '子用户', icon: 'peoples' }
+      },
+      {
+        name: 'ArticleSet',
+        path: 'set',
+        component: () => import('@/views/article/set'),
+        meta: { title: '分类设置', icon: 'chart' }
       }
     ]
   },
