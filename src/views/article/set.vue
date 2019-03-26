@@ -26,7 +26,7 @@
 
   		  			<hr>
 
-  		  			<el-form-item label="拖拽以对分类进行排序：" label-width="120px">
+  		  			<el-form-item label="上下拖拽，进行分类排序：" label-width="120px">
 	  		  			<el-tree
 								  :data="classifyList"
 								  node-key="id"
